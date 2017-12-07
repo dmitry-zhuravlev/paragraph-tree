@@ -2,6 +2,7 @@ package demo.paragraphtree.service
 
 import demo.paragraphtree.model.Paragraph
 import demo.paragraphtree.repository.ParagraphRepository
+import demo.paragraphtree.repository.find
 import org.hamcrest.Matchers.emptyIterable
 import org.junit.Assert.*
 import org.junit.Test
@@ -41,8 +42,8 @@ class ParagraphOperationsServiceTest {
         val p1 = Paragraph(documentId = DOCUMENT_ID, text = P1_TEXT)
         val p2 = Paragraph(documentId = DOCUMENT_ID, text = P2_TEXT)
         p1.next = p2
-        var p1Id = paragraphRepository.save(p1).id
-        var fetchedParagraph = paragraphRepository.findById(p1Id, -1).orElse(null)
+        var p1Id = paragraphRepository.save(p1).id!!
+        var fetchedParagraph = paragraphRepository.find(p1Id)
         assertNotNull(fetchedParagraph)
         assertEquals(P1_TEXT, fetchedParagraph.text)
         assertNotNull(fetchedParagraph.next)
@@ -54,7 +55,7 @@ class ParagraphOperationsServiceTest {
                 firstParagraphId = fetchedParagraph.id,
                 secondParagraphId = fetchedParagraph.next?.id,
                 paragraphText = MIDDLE_PARAGRAPH_TEXT)
-        fetchedParagraph = paragraphRepository.findById(p1Id, -1).orElse(null)
+        fetchedParagraph = paragraphRepository.find(p1Id)
         assertNotNull(fetchedParagraph)
         assertEquals(P1_TEXT, fetchedParagraph.text)
         assertNotNull(fetchedParagraph.next)
@@ -67,8 +68,8 @@ class ParagraphOperationsServiceTest {
         p1Id = paragraphOperations.insertParagraphBetween(
                 documentId = DOCUMENT_ID,
                 secondParagraphId = fetchedParagraph.id,
-                paragraphText = NEW_FIRST_PARAGRAPH_TEXT)
-        fetchedParagraph = paragraphRepository.findById(p1Id, -1).orElse(null)
+                paragraphText = NEW_FIRST_PARAGRAPH_TEXT)!!
+        fetchedParagraph = paragraphRepository.find(p1Id)
         assertNotNull(fetchedParagraph)
         assertEquals(NEW_FIRST_PARAGRAPH_TEXT, fetchedParagraph.text)
         assertNotNull(fetchedParagraph.next)
@@ -81,7 +82,7 @@ class ParagraphOperationsServiceTest {
                 documentId = DOCUMENT_ID,
                 firstParagraphId = p2.id,
                 paragraphText = NEW_LAST_PARAGRAPH_TEXT)
-        fetchedParagraph = paragraphRepository.findById(p1Id, -1).orElse(null)
+        fetchedParagraph = paragraphRepository.find(p1Id)
         assertNotNull(fetchedParagraph)
         assertEquals(NEW_FIRST_PARAGRAPH_TEXT, fetchedParagraph.text)
         assertNotNull(fetchedParagraph.next)
@@ -101,14 +102,14 @@ class ParagraphOperationsServiceTest {
         p1.next = p2
         val p1Id = paragraphRepository.save(p1).id!!
         paragraphOperations.insertChildParagraph(DOCUMENT_ID, CHILD_PARAGRAPH_TEXT, p1Id)
-        var fetchedParagraph = paragraphRepository.findById(p1Id, -1).orElse(null)
+        var fetchedParagraph = paragraphRepository.find(p1Id)
         assertNotNull(fetchedParagraph)
         assertEquals(P1_TEXT, fetchedParagraph.text)
         assertNotNull(fetchedParagraph.child)
         assertEquals(CHILD_PARAGRAPH_TEXT, fetchedParagraph.child?.text)
 
         paragraphOperations.insertChildParagraph(DOCUMENT_ID, SECOND_CHILD_PARAGRAPH_TEXT, p1Id)
-        fetchedParagraph = paragraphRepository.findById(p1Id, -1).orElse(null)
+        fetchedParagraph = paragraphRepository.find(p1Id)
         assertNotNull(fetchedParagraph)
         assertEquals(P1_TEXT, fetchedParagraph.text)
         assertNotNull(fetchedParagraph.child)
@@ -124,8 +125,8 @@ class ParagraphOperationsServiceTest {
         val pMiddle = Paragraph(documentId = DOCUMENT_ID, text = MIDDLE_PARAGRAPH_TEXT)
         p1.next = pMiddle
         pMiddle.next = p2
-        val p1Id = paragraphRepository.save(p1).id
-        var fetchedParagraph = paragraphRepository.findById(p1Id, -1).orElse(null)
+        val p1Id = paragraphRepository.save(p1).id!!
+        var fetchedParagraph = paragraphRepository.find(p1Id)
         assertNotNull(fetchedParagraph)
         assertEquals(P1_TEXT, fetchedParagraph.text)
         assertNotNull(fetchedParagraph.next)
@@ -134,7 +135,7 @@ class ParagraphOperationsServiceTest {
         assertEquals(P2_TEXT, fetchedParagraph.next?.next?.text)
 
         paragraphOperations.deleteParagraph(fetchedParagraph.next?.id!!)
-        fetchedParagraph = paragraphRepository.findById(p1Id, -1).orElse(null)
+        fetchedParagraph = paragraphRepository.find(p1Id)
         assertNotNull(fetchedParagraph)
         assertEquals(P1_TEXT, fetchedParagraph.text)
         assertNotNull(fetchedParagraph.next)
@@ -146,7 +147,7 @@ class ParagraphOperationsServiceTest {
         assertThat(paragraphRepository.findAll(-1), emptyIterable())
         val createdId = paragraphOperations.createParagraph(documentId = DOCUMENT_ID, paragraphText = P1_TEXT)
         assertNotNull(createdId)
-        val fetchedParagraph = paragraphRepository.findById(createdId, -1).orElse(null)
+        val fetchedParagraph = paragraphRepository.find(createdId!!)
         assertNotNull(fetchedParagraph)
         assertEquals(P1_TEXT, fetchedParagraph.text)
     }
@@ -154,14 +155,14 @@ class ParagraphOperationsServiceTest {
     @Test
     fun updateParagraphText() {
         assertThat(paragraphRepository.findAll(-1), emptyIterable())
-        val createdId = paragraphOperations.createParagraph(documentId = DOCUMENT_ID, paragraphText = P1_TEXT)
+        val createdId = paragraphOperations.createParagraph(documentId = DOCUMENT_ID, paragraphText = P1_TEXT)!!
         assertNotNull(createdId)
-        var fetchedParagraph = paragraphRepository.findById(createdId, -1).orElse(null)
+        var fetchedParagraph = paragraphRepository.find(createdId)
         assertNotNull(fetchedParagraph)
         assertEquals(P1_TEXT, fetchedParagraph.text)
 
         paragraphOperations.updateParagraphText(fetchedParagraph.id!!, P2_TEXT)
-        fetchedParagraph = paragraphRepository.findById(createdId, -1).orElse(null)
+        fetchedParagraph = paragraphRepository.find(createdId)
         assertNotNull(fetchedParagraph)
         assertEquals(P2_TEXT, fetchedParagraph.text)
     }
@@ -174,8 +175,8 @@ class ParagraphOperationsServiceTest {
         val pMiddle = Paragraph(documentId = DOCUMENT_ID, text = MIDDLE_PARAGRAPH_TEXT)
         p1.next = pMiddle
         pMiddle.next = p2
-        val p1Id = paragraphRepository.save(p1).id
-        var fetchedParagraph = paragraphRepository.findById(p1Id, -1).orElse(null)
+        val p1Id = paragraphRepository.save(p1).id!!
+        var fetchedParagraph = paragraphRepository.find(p1Id)
         assertNotNull(fetchedParagraph)
         assertEquals(P1_TEXT, fetchedParagraph.text)
         assertNotNull(fetchedParagraph.next)
@@ -185,7 +186,7 @@ class ParagraphOperationsServiceTest {
         assertNull(fetchedParagraph.next?.next?.next)
 
         paragraphOperations.moveParagraphAfter(fetchedParagraph.next?.id!!, fetchedParagraph.next?.next?.id!!)
-        fetchedParagraph = paragraphRepository.findById(p1Id, -1).orElse(null)
+        fetchedParagraph = paragraphRepository.find(p1Id)
         assertNotNull(fetchedParagraph)
         assertEquals(P1_TEXT, fetchedParagraph.text)
         assertNotNull(fetchedParagraph.next)
@@ -203,8 +204,8 @@ class ParagraphOperationsServiceTest {
         val pMiddle = Paragraph(documentId = DOCUMENT_ID, text = MIDDLE_PARAGRAPH_TEXT)
         p1.next = pMiddle
         pMiddle.next = p2
-        val p1Id = paragraphRepository.save(p1).id
-        var fetchedParagraph = paragraphRepository.findById(p1Id, -1).orElse(null)
+        val p1Id = paragraphRepository.save(p1).id!!
+        var fetchedParagraph = paragraphRepository.find(p1Id)
         assertNotNull(fetchedParagraph)
         assertEquals(P1_TEXT, fetchedParagraph.text)
         assertNotNull(fetchedParagraph.next)
@@ -214,7 +215,7 @@ class ParagraphOperationsServiceTest {
         assertNull(fetchedParagraph.next?.next?.next)
 
         paragraphOperations.moveParagraphBefore(fetchedParagraph.next?.id!!, fetchedParagraph.id!!)
-        fetchedParagraph = paragraphRepository.findById(pMiddle.id!!, -1).orElse(null)
+        fetchedParagraph = paragraphRepository.find(pMiddle.id!!)
         assertNotNull(fetchedParagraph)
         assertEquals(MIDDLE_PARAGRAPH_TEXT, fetchedParagraph.text)
         assertNotNull(fetchedParagraph.next)

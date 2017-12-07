@@ -21,18 +21,18 @@ class ParagraphOperationsService {
     fun getParagraph(id:Long) = paragraphRepository.find(id)
 
     fun updateParagraphText(paragraphId: Long, newParagraphText: String) {
-        val currentParagraph = paragraphRepository.find(paragraphId) ?: return
+        val currentParagraph = paragraphRepository.find(paragraphId, 1) ?: return
         currentParagraph.text = newParagraphText
         paragraphRepository.save(currentParagraph)
     }
 
     fun moveParagraphBefore(paragraphId: Long, beforeParagraphId: Long) {
-        val beforeParagraph = paragraphRepository.find(beforeParagraphId) ?: return
+        val beforeParagraph = paragraphRepository.find(beforeParagraphId, 1) ?: return
         val prevOfBeforeParagraph = paragraphRepository.findPreviousParagraph(beforeParagraph.id!!)
         if (prevOfBeforeParagraph != null) {
             moveParagraphAfter(paragraphId, prevOfBeforeParagraph.id!!)
         } else {
-            val currentParagraph = paragraphRepository.find(paragraphId) ?: return
+            val currentParagraph = paragraphRepository.find(paragraphId, 1) ?: return
             val previousParagraph = paragraphRepository.findPreviousParagraph(paragraphId)
             if (previousParagraph != null) {
                 previousParagraph.next = currentParagraph.next
@@ -43,8 +43,8 @@ class ParagraphOperationsService {
     }
 
     fun moveParagraphAfter(paragraphId: Long, afterParagraphId: Long) {
-        val currentParagraph = paragraphRepository.find(paragraphId) ?: return
-        val afterParagraph = paragraphRepository.find(afterParagraphId) ?: return
+        val currentParagraph = paragraphRepository.find(paragraphId, 1) ?: return
+        val afterParagraph = paragraphRepository.find(afterParagraphId, 1) ?: return
         val previousParagraph = paragraphRepository.findPreviousParagraph(paragraphId)
         if (previousParagraph != null) {
             previousParagraph.next = currentParagraph.next
@@ -55,7 +55,7 @@ class ParagraphOperationsService {
     }
 
     fun deleteParagraph(paragraphId: Long) {
-        val currentParagraph = paragraphRepository.find(paragraphId) ?: return
+        val currentParagraph = paragraphRepository.find(paragraphId, 1) ?: return
         val previousParagraph = paragraphRepository.findPreviousParagraph(paragraphId)
         if (previousParagraph != null) {
             previousParagraph.next = currentParagraph.next
@@ -67,7 +67,7 @@ class ParagraphOperationsService {
 
     fun insertChildParagraph(documentId: Long, paragraphText: String, parentParagraphId: Long): Long? {
         val newParagraph = Paragraph(documentId = documentId, text = paragraphText)
-        val parentParagraph = paragraphRepository.find(parentParagraphId) ?: return null
+        val parentParagraph = paragraphRepository.find(parentParagraphId, 1) ?: return null
         val existingChild = parentParagraph.child
         if (existingChild != null) {
             newParagraph.next = existingChild
@@ -92,18 +92,18 @@ class ParagraphOperationsService {
 
         when {
             insertFirst -> {
-                val secondParagraph = paragraphRepository.find(secondParagraphId!!) ?: return null
+                val secondParagraph = paragraphRepository.find(secondParagraphId!!, 1) ?: return null
                 newParagraph.next = secondParagraph
                 paragraphRepository.save(newParagraph)
             }
             insertLast -> {
-                val firstParagraph = paragraphRepository.find(firstParagraphId!!) ?: return null
+                val firstParagraph = paragraphRepository.find(firstParagraphId!!, 1) ?: return null
                 firstParagraph.next = newParagraph
                 paragraphRepository.save(firstParagraph)
             }
             insertBetween -> {
-                val firstParagraph = paragraphRepository.find(firstParagraphId!!) ?: return null
-                val secondParagraph = paragraphRepository.find(secondParagraphId!!) ?: return null
+                val firstParagraph = paragraphRepository.find(firstParagraphId!!, 1) ?: return null
+                val secondParagraph = paragraphRepository.find(secondParagraphId!!, 1) ?: return null
                 firstParagraph.next = newParagraph
                 newParagraph.next = secondParagraph
                 paragraphRepository.save(firstParagraph)
