@@ -13,20 +13,20 @@ import org.springframework.transaction.annotation.Transactional
  */
 @Service
 @Transactional
-class ParagraphOperationsService {
+class ParagraphOperationsService : IParagraphOperationsService {
 
     @Autowired
     lateinit var paragraphRepository: ParagraphRepository
 
-    fun getParagraph(id:Long) = paragraphRepository.find(id)
+    override fun getParagraph(id:Long) = paragraphRepository.find(id)
 
-    fun updateParagraphText(paragraphId: Long, newParagraphText: String) {
+    override fun updateParagraphText(paragraphId: Long, newParagraphText: String) {
         val currentParagraph = paragraphRepository.find(paragraphId, 1) ?: return
         currentParagraph.text = newParagraphText
         paragraphRepository.save(currentParagraph)
     }
 
-    fun moveParagraphBefore(paragraphId: Long, beforeParagraphId: Long) {
+    override fun moveParagraphBefore(paragraphId: Long, beforeParagraphId: Long) {
         val beforeParagraph = paragraphRepository.find(beforeParagraphId, 1) ?: return
         val prevOfBeforeParagraph = paragraphRepository.findPreviousParagraph(beforeParagraph.id!!)
         if (prevOfBeforeParagraph != null) {
@@ -42,7 +42,7 @@ class ParagraphOperationsService {
         }
     }
 
-    fun moveParagraphAfter(paragraphId: Long, afterParagraphId: Long) {
+    override fun moveParagraphAfter(paragraphId: Long, afterParagraphId: Long) {
         val currentParagraph = paragraphRepository.find(paragraphId, 1) ?: return
         val afterParagraph = paragraphRepository.find(afterParagraphId, 1) ?: return
         val previousParagraph = paragraphRepository.findPreviousParagraph(paragraphId)
@@ -54,7 +54,7 @@ class ParagraphOperationsService {
         if (previousParagraph != null) paragraphRepository.save(previousParagraph) else paragraphRepository.save(afterParagraph)
     }
 
-    fun deleteParagraph(paragraphId: Long) {
+    override fun deleteParagraph(paragraphId: Long) {
         val currentParagraph = paragraphRepository.find(paragraphId, 1) ?: return
         val previousParagraph = paragraphRepository.findPreviousParagraph(paragraphId)
         if (previousParagraph != null) {
@@ -63,9 +63,9 @@ class ParagraphOperationsService {
         paragraphRepository.delete(currentParagraph)
     }
 
-    fun createParagraph(documentId: Long, paragraphText: String) = insertParagraphBetween(documentId, paragraphText)
+    override fun createParagraph(documentId: Long, paragraphText: String) = insertParagraphBetween(documentId, paragraphText)
 
-    fun insertChildParagraph(documentId: Long, paragraphText: String, parentParagraphId: Long): Long? {
+    override fun insertChildParagraph(documentId: Long, paragraphText: String, parentParagraphId: Long): Long? {
         val newParagraph = Paragraph(documentId = documentId, text = paragraphText)
         val parentParagraph = paragraphRepository.find(parentParagraphId, 1) ?: return null
         val existingChild = parentParagraph.child
@@ -79,7 +79,7 @@ class ParagraphOperationsService {
         return newParagraph.id
     }
 
-    fun insertParagraphBetween(documentId: Long, paragraphText: String, firstParagraphId: Long? = null, secondParagraphId: Long? = null): Long? {
+    override fun insertParagraphBetween(documentId: Long, paragraphText: String, firstParagraphId: Long?, secondParagraphId: Long?): Long? {
         val newParagraph = Paragraph(documentId = documentId, text = paragraphText)
         if (firstParagraphId == null && secondParagraphId == null) {
             paragraphRepository.save(newParagraph)

@@ -32,7 +32,7 @@ class ParagraphOperationsServiceTest {
     }
 
     @Autowired
-    lateinit var paragraphOperations: ParagraphOperationsService
+    lateinit var paragraphOperations: IParagraphOperationsService
 
     @Autowired
     lateinit var paragraphRepository: ParagraphRepository

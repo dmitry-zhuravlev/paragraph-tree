@@ -13,14 +13,14 @@ import org.springframework.transaction.annotation.Transactional
  */
 @Service
 @Transactional
-class DocumentOperationsService {
+class DocumentOperationsService : IDocumentOperationsService {
     @Autowired
     lateinit var documentRepository: DocumentRepository
 
-    fun getDocument(id: Long) = documentRepository.find(id)
+    override fun getDocument(id: Long) = documentRepository.find(id)
 
-    fun createDocument() = documentRepository.save(Document())
+    override fun createDocument() = documentRepository.save(Document())
 
-    fun updateDocument(document: Document) = documentRepository.save(document)
+    override fun updateDocument(document: Document) = documentRepository.save(document)
 
 }

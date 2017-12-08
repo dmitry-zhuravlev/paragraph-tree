@@ -1,7 +1,7 @@
 package demo.paragraphtree.rest
 
-import demo.paragraphtree.service.DocumentOperationsService
-import demo.paragraphtree.service.ParagraphOperationsService
+import demo.paragraphtree.service.IDocumentOperationsService
+import demo.paragraphtree.service.IParagraphOperationsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestMapping
@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RestController
 class OperationsEndpoint {
 
     @Autowired
-    lateinit var documentOperationsService: DocumentOperationsService
+    lateinit var documentOperationsService: IDocumentOperationsService
 
     @Autowired
-    lateinit var paragraphOperationsService: ParagraphOperationsService
+    lateinit var paragraphOperationsService: IParagraphOperationsService
 
     @RequestMapping(value = "moveParagraphBefore", method = arrayOf(RequestMethod.PUT))
     fun moveParagraphBefore(@RequestParam("paragraphId") paragraphId: Long,
