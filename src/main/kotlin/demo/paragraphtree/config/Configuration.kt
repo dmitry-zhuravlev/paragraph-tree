@@ -23,7 +23,7 @@ class Configuration{
         val file = File("paragraph.db")
     }
 
-    @Bean(destroyMethod = "shutdown")
+ /*   @Bean(destroyMethod = "shutdown")
     fun graphDatabaseService() = GraphDatabaseFactory()
             .newEmbeddedDatabaseBuilder(file)
             .newGraphDatabase()
@@ -34,5 +34,5 @@ class Configuration{
     }
 
     @Bean
-    fun transactionManager() = Neo4jTransactionManager(getSessionFactory())
+    fun transactionManager() = Neo4jTransactionManager(getSessionFactory())*/
 }

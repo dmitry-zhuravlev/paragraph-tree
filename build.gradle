@@ -46,9 +46,9 @@ dependencies {
 //	compile('org.neo4j:neo4j:3.3.0')
 	compile('org.neo4j:neo4j-cypher:3.3.0')
 	compile('org.neo4j:neo4j-lucene-index:3.3.0')
-	compile('org.neo4j:neo4j-ogm-embedded-driver:3.0.2')
+//	compile('org.neo4j:neo4j-ogm-embedded-driver:3.0.2')
 //	compile 'org.neo4j:neo4j-ogm-http-driver:3.0.2'
-//	compile 'org.neo4j:neo4j-ogm-bolt-driver:3.0.2'
+	compile 'org.neo4j:neo4j-ogm-bolt-driver:3.0.2'
 	compile("org.jetbrains.kotlin:kotlin-stdlib-jre8:${kotlinVersion}")
 	compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
 	testCompile('org.springframework.boot:spring-boot-starter-test')
